@@ -1,5 +1,6 @@
 import { Client, Message, Interaction, CommandInteraction } from "discord.js";
 import { config } from "dotenv";
+import { convertUrl } from "./components/convertUrl";
 
 config();
 
@@ -12,11 +13,13 @@ client.once("ready", () => {
   console.log(`${client.user?.username} でログインしています`);
 });
 
-client.on("messageCreate", (message: Message) => {
+client.on("messageCreate", async (message: Message) => {
   if (message.author.bot) return;
-  if (message.content.startsWith("https://twitter.com/")) {
-    message.reply("twitter");
-  }
+  
+  const url = convertUrl(message.content);
+  if (!url) return;
+
+  await message.reply(url);
 });
 
 client.login(process.env.DISCORD_TOKEN);
